@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUNA ASCENT | Mission Designer</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; color: #edf4ff; font-family: Arial, sans-serif;
+      background: radial-gradient(circle at 20% 10%, #18315b, #080d1b 48%, #030611);
+      min-height: 100vh;
+    }
+    header { padding: 28px 7%; border-bottom: 1px solid #294268; background: #071020cc; }
+    header small { color: #69d7ff; letter-spacing: 4px; }
+    h1 { margin: 8px 0; font-size: clamp(30px, 5vw, 52px); letter-spacing: 3px; }
+    header p { color: #a9bad4; margin-bottom: 0; }
+    main { width: min(1100px, 92%); margin: 28px auto 60px; }
+    .panel { background: #101c31eF; border: 1px solid #29466e; border-radius: 16px; padding: 22px; margin-bottom: 20px; box-shadow: 0 12px 35px #0005; }
+    h2 { margin-top: 0; color: #75d9ff; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    label { display: block; margin: 12px 0 6px; color: #c4d5ec; }
+    select { width: 100%; padding: 12px; border-radius: 9px; background: #071326; color: white; border: 1px solid #3d5e86; }
+    .check { display: flex; align-items: flex-start; gap: 10px; padding: 10px; background: #0a1629; border-radius: 9px; margin: 8px 0; }
+    .check input { margin-top: 4px; accent-color: #4ccfff; }
+    .hint { color: #9eb2ce; font-size: 13px; line-height: 1.5; }
+    button { background: linear-gradient(90deg, #087fc2, #21b8d8); color: white; border: 0; border-radius: 10px; padding: 14px 22px; font-size: 16px; font-weight: bold; cursor: pointer; }
+    button:hover { filter: brightness(1.15); }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 18px; }
+    .stat { background: #071326; padding: 14px; border-radius: 10px; border: 1px solid #203b5d; }
+    .stat strong { display: block; font-size: 22px; color: #72ddff; margin-top: 6px; }
+    #result { display: none; }
+    #status { font-size: 24px; font-weight: bold; }
+    .issue { color: #ffbf8b; }
+    .good { color: #8df0bd; }
+
+/* MISSION TELEMETRY DASHBOARD */
+
+.telemetry-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+    margin-top: 20px;
+}
+
+.telemetry-card {
+    background: #071326;
+    border: 1px solid #29466e;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.telemetry-card strong {
+    display: block;
+    font-size: 23px;
+    color: #72ddff;
+    margin: 10px 0;
+}
+
+.telemetry-card small {
+    color: #a9bad4;
+}
+
+.meter-track {
+    height: 10px;
+    background: #26364d;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 12px 0;
+}
+
+.meter-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #087fc2, #21d4e8);
+    border-radius: 10px;
+    transition: width 0.6s ease;
+}
+
+.telemetry-phase {
+    background: #071326;
+    border: 1px solid #29466e;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.telemetry-phase strong {
+    display: block;
+    color: #8df0bd;
+    margin-top: 8px;
+    font-size: 19px;
+}
+
+    footer { text-align: center; color: #8297b5; padding: 25px; font-size: 13px; }
+    /* ROCKET LAUNCH SYSTEM */
+
+    #countdown {
+    font-size: 65px;
+    font-weight: bold;
+    color: #63dcff;
+    text-align: center;
+    margin: 25px;
+    }
+
+    #rocketAnimation {
+        display: none;
+        font-size: 65px;
+        text-align: center;
+    }
+
+    .liftoff {
+        display: block !important;
+        animation: rocketRise 2.5s ease-in forwards;
+    }
+
+    @keyframes rocketRise {
+        0% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateY(-180px);
+            opacity: 0;
+        }
+    }
+
+    .launch-message {
+        text-align: center;
+        font-size: 22px;
+        color: #78edb0;
+        font-weight: bold;
+    }
+    /* SPACE TRAVEL SCENE */
+.space-scene {
+    position: relative;
+    height: 260px;
+    margin: 20px 0;
+    overflow: hidden;
+    border-radius: 15px;
+    background:
+        radial-gradient(circle at 20% 20%, #263d65 1px, transparent 2px),
+        radial-gradient(circle at 70% 65%, #ffffff 1px, transparent 2px),
+        radial-gradient(circle at 45% 80%, #ffffff 1px, transparent 2px),
+        linear-gradient(120deg, #030817, #101d3b);
+    background-size: 90px 90px, 130px 130px, 110px 110px, cover;
+}
+
+.earth {
+    position: absolute;
+    left: 5%;
+    top: 28%;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #7bdcff, #1260bd 60%, #061b53);
+    box-shadow: 0 0 30px #268bff;
+}
+
+.moon {
+    position: absolute;
+    right: 7%;
+    top: 25%;
+    width: 115px;
+    height: 115px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #eeeeee, #9299a5 70%, #444b5c);
+    box-shadow: 0 0 25px #aebbd5;
+}
+
+.earth::after,
+.moon::after {
+    content: "";
+    position: absolute;
+    bottom: -25px;
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.earth::after { content: "EARTH"; }
+.moon::after { content: "MOON"; }
+
+/* SIMPLIFIED SPACECRAFT MODEL */
+.travel-craft {
+    position: absolute;
+    z-index: 3;
+    left: 18%;
+    top: 62%;
+    width: 75px;
+    height: 30px;
+    transform: rotate(-12deg);
+}
+
+.craft-body {
+    position: absolute;
+    left: 15px;
+    top: 7px;
+    width: 48px;
+    height: 16px;
+    border-radius: 50% 35% 35% 50%;
+    background: linear-gradient(#ffffff, #8499b5);
+}
+
+.craft-nose {
+    position: absolute;
+    left: 57px;
+    top: 7px;
+    width: 20px;
+    height: 16px;
+    background: #dce8f7;
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.craft-wing {
+    position: absolute;
+    left: 25px;
+    top: 18px;
+    width: 28px;
+    height: 12px;
+    background: #287bd3;
+    transform: skew(-25deg);
+}
+
+.craft-flame {
+    position: absolute;
+    left: -13px;
+    top: 10px;
+    width: 25px;
+    height: 10px;
+    background: linear-gradient(90deg, transparent, #ff8c22, #fff4a3);
+    border-radius: 50%;
+    filter: blur(2px);
+}
+
+.space-scene.traveling .travel-craft {
+    animation: spacecraftFlight 9s linear forwards;
+}
+
+@keyframes spacecraftFlight {
+    0%   { left: 18%; top: 62%; }
+    45%  { left: 45%; top: 38%; }
+    100% { left: 76%; top: 48%; }
+}
+
+.scene-caption {
+    position: absolute;
+    bottom: 12px;
+    left: 15px;
+    color: #8be5ff;
+    font-weight: bold;
+}
+
+/* MOON LANDING SCENE */
+.lunar-scene {
+    position: relative;
+    height: 280px;
+    margin: 20px 0;
+    overflow: hidden;
+    border-radius: 15px;
+    background: linear-gradient(#050b1b, #263653);
+}
+
+.lunar-surface {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 65px;
+    background: linear-gradient(#777e8b, #343b49);
+    border-radius: 50% 50% 0 0;
+}
+
+.lander {
+    position: absolute;
+    left: 50%;
+    top: 12%;
+    width: 90px;
+    height: 100px;
+    transform: translateX(-50%);
+}
+
+.lander-body {
+    position: absolute;
+    left: 24px;
+    top: 25px;
+    width: 42px;
+    height: 38px;
+    background: linear-gradient(135deg, #f5d77a, #a77c35);
+    border: 2px solid #ffe8a3;
+}
+
+.lander-top {
+    position: absolute;
+    left: 34px;
+    top: 8px;
+    width: 22px;
+    height: 20px;
+    background: #d9e6f0;
+    border-radius: 5px;
+}
+
+.lander-leg {
+    position: absolute;
+    top: 59px;
+    width: 5px;
+    height: 32px;
+    background: #d5dce5;
+}
+
+.lander-leg.left {
+    left: 20px;
+    transform: rotate(25deg);
+}
+
+.lander-leg.right {
+    right: 20px;
+    transform: rotate(-25deg);
+}
+
+.lander-foot {
+    position: absolute;
+    top: 87px;
+    width: 23px;
+    height: 4px;
+    background: #d5dce5;
+}
+
+.lander-foot.left { left: 7px; }
+.lander-foot.right { right: 7px; }
+
+.lander-flame {
+    position: absolute;
+    left: 38px;
+    top: 62px;
+    width: 15px;
+    height: 35px;
+    background: linear-gradient(#fff7a0, #ff8a20, transparent);
+    opacity: 0;
+}
+
+.lunar-scene.landing .lander {
+    animation: landerDescent 7.5s ease-in forwards;
+}
+
+.lunar-scene.landing .lander-flame {
+    animation: engineBurn 7.5s ease-in forwards;
+}
+
+@keyframes landerDescent {
+    0% { top: 5%; }
+    70% { top: 48%; }
+    100% { top: 52%; }
+}
+
+@keyframes engineBurn {
+    0%, 70% { opacity: 1; }
+    100% { opacity: 0; }
+}
+/* INTERACTIVE LUNAR EXPLORATION */
+
+#lunarArena {
+    position: relative;
+    width: 100%;
+    height: 390px;
+    overflow: hidden;
+    border-radius: 14px;
+    border: 1px solid #456486;
+    background:
+        radial-gradient(circle at 15% 18%, white 1px, transparent 2px),
+        radial-gradient(circle at 75% 12%, white 1px, transparent 2px),
+        linear-gradient(#071226 0%, #172944 58%, #777e88 58%, #454d5a 100%);
+    background-size: 110px 95px, 150px 130px, cover;
+}
+
+.lunar-horizon {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 34%;
+    background: linear-gradient(#969ca5, #414957);
+    border-radius: 50% 50% 0 0;
+}
+
+.site {
+    position: absolute;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 115px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.site-icon {
+    display: block;
+    font-size: 28px;
+}
+
+.site.done {
+    opacity: 0.5;
+    filter: grayscale(1);
+}
+
+#playerAvatar {
+    position: absolute;
+    z-index: 5;
+    left: 17%;
+    top: 72%;
+    transform: translate(-50%, -50%);
+    font-size: 38px;
+}
+
+.explore-hud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin: 15px 0;
+}
+
+#modeStatus {
+    color: #8be5ff;
+    font-weight: bold;
+}
+
+#nearbyPrompt {
+    min-height: 25px;
+    color: #8df0bd;
+    font-weight: bold;
+}
+
+.explore-help {
+    color: #a9bad4;
+    font-size: 13px;
+    line-height: 1.7;
+}
+/* RETURN TO EARTH ANIMATION */
+.return-craft {
+    position: absolute;
+    z-index: 3;
+    left: 76%;
+    top: 48%;
+    width: 75px;
+    height: 30px;
+    transform: rotate(-12deg);
+}
+.return-scene-active .return-craft {
+    animation: returnFlight 9s linear forwards;
+}
+
+@keyframes returnFlight {
+    0% {
+        left: 76%;
+        top: 48%;
+    }
+
+    45% {
+        left: 45%;
+        top: 38%;
+    }
+
+    100% {
+        left: 18%;
+        top: 62%;
+    }
+}
+
+  </style>
+</head>
+<body>
+<header>
+  <small>SPACE EXPLORATION SIMULATOR</small>
+  <h1>LUNA ASCENT</h1>
+  <p>Design your mission. Balance your resources. Explore the Moon.</p>
+</header>
+
+<main>
+  <section class="panel">
+    <h2>01 / Mission briefing</h2>
+    <p>Choose the scientific goal your space agency wants to achieve.</p>
+    <label for="objective">Mission objective</label>
+    <select id="objective">
+      <option value="ice">Search for Water Ice</option>
+      <option value="mapping">Map the Lunar Surface</option>
+      <option value="geology">Study Lunar Minerals</option>
+    </select>
+    <!-- ROCKET LAUNCH CONTROL -->
+
+  
+
+
+  </section>
+
+  <section class="panel">
+    <h2>02 / Spacecraft design</h2>
+    <p>Select scientific instruments. More instruments can increase scientific value, but they also use more resources.</p>
+    <div class="grid">
+      <div>
+        <label>Scientific instruments</label>
+        <div class="check"><input type="checkbox" name="instrument" value="camera"><span><b>High-Resolution Camera</b><br><span class="hint">Maps surface features. Mass 40 | Power 20</span></span></div>
+        <div class="check"><input type="checkbox" name="instrument" value="spectrometer"><span><b>Mineral Spectrometer</b><br><span class="hint">Studies lunar minerals. Mass 55 | Power 30</span></span></div>
+        <div class="check"><input type="checkbox" name="instrument" value="radar"><span><b>Subsurface Radar</b><br><span class="hint">Searches beneath the surface. Mass 70 | Power 40</span></span></div>
+        <div class="check"><input type="checkbox" name="instrument" value="magnetometer"><span><b>Magnetometer</b><br><span class="hint">Measures magnetic properties. Mass 25 | Power 15</span></span></div>
+      </div>
+      <div>
+        <label for="rocket">Launch vehicle</label>
+        <select id="rocket">
+          <option value="small">Pioneer — capacity 180</option>
+          <option value="medium" selected>Pathfinder — capacity 300</option>
+          <option value="heavy">Atlas — capacity 500</option>
+        </select>
+        <label for="orbit">Target orbit</label>
+        <select id="orbit">
+          <option value="low">Low Lunar Orbit</option>
+          <option value="polar" selected>Polar Lunar Orbit</option>
+          <option value="high">High Lunar Orbit</option>
+        </select>
+        <p class="hint">Different orbits provide different coverage and communication capabilities in this simplified game model.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>03 / Mission control</h2>
+    <p>Run the simulation to check whether your spacecraft design fits the mission constraints.</p>
+    <button onclick="runSimulation()">▶ RUN MISSION SIMULATION</button>
+    <p class="hint">Tip: If your mission is not ready, change your instruments, rocket or orbit and try again.</p>
+  </section>
+
+  <section class="panel" id="result">
+    <h2>04 / Mission evaluation</h2>
+    <div id="status"></div>
+    <p id="summary"></p>
+    <div class="stats" id="stats"></div>
+    <h3>Engineering feedback</h3>
+    <ul id="issues"></ul>
+    <p class="hint">These are simplified educational game rules, not actual NASA mission limits or flight-ready engineering calculations.</p>
+  </section>
+
+<!-- MISSION TELEMETRY DASHBOARD -->
+
+<section class="panel" id="telemetryPanel" style="display:none;">
+
+    <h2>MISSION TELEMETRY DASHBOARD</h2>
+
+    <p>
+        Monitor spacecraft resources, communications,
+        scientific output and mission status.
+    </p>
+
+    <div class="telemetry-phase">
+        MISSION PHASE
+        <strong id="telemetryPhase">Awaiting simulation...</strong>
+    </div>
+
+    <div class="telemetry-grid">
+
+        <div class="telemetry-card">
+            ⚡ POWER SYSTEM
+            <strong id="telemetryPower">--</strong>
+            <div class="meter-track">
+                <div class="meter-fill" id="powerMeter"></div>
+            </div>
+            <small id="powerState">Awaiting data</small>
+        </div>
+
+        <div class="telemetry-card">
+            📡 COMMUNICATIONS
+            <strong id="telemetryCommunications">--</strong>
+            <div class="meter-track">
+                <div class="meter-fill" id="communicationsMeter"></div>
+            </div>
+            <small id="communicationsState">Awaiting data</small>
+        </div>
+
+        <div class="telemetry-card">
+            🌕 LUNAR COVERAGE
+            <strong id="telemetryCoverage">--</strong>
+            <div class="meter-track">
+                <div class="meter-fill" id="coverageMeter"></div>
+            </div>
+            <small>Selected orbit coverage</small>
+        </div>
+
+        <div class="telemetry-card">
+            🔬 SCIENCE DATA
+            <strong id="telemetryScience">--</strong>
+            <small>Mission science points</small>
+        </div>
+
+        <div class="telemetry-card">
+            🚀 MISSION STATUS
+            <strong id="telemetryStatus">Awaiting simulation</strong>
+            <small id="telemetryScore">No mission score yet</small>
+        </div>
+
+    </div>
+
+    <p class="hint">
+        Telemetry values use the simplified educational
+        simulation model.
+    </p>
+
+</section>
+
+  <section class="panel" id="launchPanel" style="display:none;">
+
+      <h2>05 / LAUNCH CONTROL</h2>
+
+      <p>
+          All engineering checks passed.
+          Your spacecraft is cleared for launch.
+      </p>
+
+      <button id="launchButton" onclick="startLaunch()">
+          🚀 START COUNTDOWN
+      </button>
+
+      <div id="countdown"></div>
+
+      <div id="rocketAnimation">
+          🚀
+      </div>
+
+      <p id="launchMessage" class="launch-message"></p>
+  </section>     
+  <!-- MOON JOURNEY -->
+<section class="panel" id="travelPanel" style="display:none;">
+    <h2>06 / MOON JOURNEY</h2>
+    <p>Your spacecraft has launched! Begin the journey to the Moon.</p>
+
+    <button onclick="startJourney()" id="journeyButton">
+        BEGIN MOON JOURNEY
+    </button>
+    <div class="space-scene" id="travelScene">
+    <div class="earth"></div>
+    <div class="moon"></div>
+
+    <div class="travel-craft">
+        <div class="craft-flame"></div>
+        <div class="craft-body"></div>
+        <div class="craft-nose"></div>
+        <div class="craft-wing"></div>
+    </div>
+
+    <div class="scene-caption" id="travelCaption">
+        EARTH ORBIT
+    </div>
+</div>
+
+    <h3 id="journeyStatus">Waiting for departure...</h3>
+
+    <div style="background:#26364d; height:18px; border-radius:10px; overflow:hidden;">
+        <div id="journeyProgress"
+             style="width:0%; height:100%; background:#28c7e8; transition:width 1s;">
+        </div>
+    </div>
+
+    <h2 id="arrivalMessage"></h2>
+</section>
+<!-- MOON LANDING -->
+<section class="panel" id="landingPanel" style="display:none;">
+    <h2>07 / MOON LANDING</h2>
+
+    <p>Your spacecraft has reached lunar orbit. Choose your landing zone.</p>
+
+    <label for="landingZone">Select landing zone:</label>
+
+    <select id="landingZone">
+        <option value="south">Lunar South Pole</option>
+        <option value="equator">Lunar Equatorial Region</option>
+        <option value="near">Near Side of the Moon</option>
+    </select>
+
+    <br><br>
+    <div class="lunar-scene" id="landingScene">
+    <div class="lander">
+        <div class="lander-top"></div>
+        <div class="lander-body"></div>
+        <div class="lander-leg left"></div>
+        <div class="lander-leg right"></div>
+        <div class="lander-foot left"></div>
+        <div class="lander-foot right"></div>
+        <div class="lander-flame"></div>
+    </div>
+
+    <div class="lunar-surface"></div>
+</div>
+
+    <button onclick="startLanding()" id="landingButton">
+        BEGIN LUNAR LANDING
+    </button>
+
+    <h3 id="landingStatus">Waiting for landing...</h3>
+    <h2 id="landingResult"></h2>
+</section>
+<!-- MOON HABITAT -->
+<section class="panel" id="habitatPanel" style="display:none;">
+    <h2>08 / LUNAR HABITAT</h2>
+
+    <p>Welcome to the lunar surface! Activate your astronaut habitat.</p>
+
+    <div class="space-scene">
+        <div class="moon" style="right:40%; top:20%;"></div>
+        <div style="position:absolute; bottom:45px; left:35%;
+                    width:180px; height:75px; background:#d5dce5;
+                    border-radius:15px 15px 5px 5px;
+                    border:3px solid #7db9e8;">
+            <div style="position:absolute; top:12px; left:20px;
+                        width:40px; height:30px; background:#315c83;"></div>
+            <div style="position:absolute; top:12px; right:20px;
+                        width:40px; height:30px; background:#315c83;"></div>
+        </div>
+        <div style="position:absolute; bottom:25px; left:12%;
+                    width:100px; height:35px; background:#1678b8;
+                    border:2px solid #9bdcff;"></div>
+        <div style="position:absolute; bottom:25px; right:10%;
+                    width:100px; height:35px; background:#1678b8;
+                    border:2px solid #9bdcff;"></div>
+        <div class="scene-caption">LUNAR RESEARCH BASE</div>
+    </div>
+
+    <button id="habitatButton" onclick="activateHabitat()">
+        ACTIVATE MOON HABITAT
+    </button>
+
+    <h3 id="habitatStatus">Habitat systems offline</h3>
+
+    <p>Power: <span id="powerStatus">Offline</span></p>
+    <p>Oxygen: <span id="oxygenStatus">Offline</span></p>
+    <p>Research: <span id="researchStatus">Offline</span></p>
+</section>
+<!-- LUNAR EXPLORATION -->
+
+<!-- INTERACTIVE LUNAR EXPLORATION -->
+
+<section class="panel" id="explorationPanel" style="display:none;">
+
+    <h2>09 / LUNAR EXPLORATION</h2>
+
+    <p>Commander, explore the lunar surface and complete your research missions!</p>
+
+    <div class="explore-hud">
+        <button id="modeButton" onclick="toggleExploreMode()">
+            🚙 ENTER ROVER
+        </button>
+
+        <span id="modeStatus">MODE: ASTRONAUT</span>
+    </div>
+
+    <div id="lunarArena">
+
+        <div class="lunar-horizon"></div>
+
+        <div class="site" id="siteRover"
+             style="left:17%;top:72%;">
+            <span class="site-icon">🛠️</span>
+            ROVER GARAGE
+        </div>
+
+        <div class="site" id="siteWater"
+             style="left:72%;top:24%;">
+            <span class="site-icon">🧊</span>
+            WATER-ICE SITE
+        </div>
+
+        <div class="site" id="siteSamples"
+             style="left:82%;top:72%;">
+            <span class="site-icon">🪨</span>
+            SAMPLE SITE
+        </div>
+
+        <div id="playerAvatar">👨‍🚀</div>
+
+    </div>
+
+    <p id="nearbyPrompt">
+        Walk to the rover garage and press E.
+    </p>
+
+    <p class="explore-help">
+        W A S D / Arrow Keys = Movement
+        <br>
+        E = Interact
+        <br>
+        ENTER ROVER = Drive rover
+        <br>
+        EXIT ROVER = Return to astronaut
+    </p>
+
+    <h3 id="taskProgress">
+        Objectives completed: 0 / 3
+    </h3>
+
+    <div style="background:#26364d;height:18px;
+                border-radius:10px;overflow:hidden;">
+
+        <div id="taskBar"
+             style="height:100%;width:0%;
+                    background:#28c7e8;
+                    transition:width 0.5s;">
+        </div>
+
+    </div>
+
+    <h2 id="explorationResult"></h2>
+
+</section>
+
+<!-- 10 / POST-MISSION REPORT -->
+<section class="panel" id="missionReportPanel" style="display:none;">
+
+    <h2>10 / POST-MISSION REPORT</h2>
+
+    <h3 class="good">🌕 All Scientific Objectives Completed!</h3>
+
+    <p>Your lunar research mission has successfully completed all objectives.</p>
+
+    <div class="stats">
+
+        <div class="stat">
+            Mission Destination
+            <strong>Moon</strong>
+        </div>
+
+        <div class="stat">
+            Objectives
+            <strong>3 / 3</strong>
+        </div>
+
+        <div class="stat">
+            Mission Status
+            <strong>Successful</strong>
+        </div>
+
+        <div class="stat">
+            Launch Vehicle
+            <strong id="reportRocket">Pathfinder</strong>
+        </div>
+
+    </div>
+
+    <h3>Scientific Discoveries</h3>
+
+    <div class="stat">
+        <p>✅ Water-ice survey completed</p>
+        <p>✅ Lunar samples collected</p>
+        <p>✅ Lunar rover deployed</p>
+    </div>
+
+    <h3>Mission Configuration</h3>
+
+    <div class="stat">
+        <p>Selected Orbit: <strong id="reportOrbit">Polar Lunar Orbit</strong></p>
+        <p>Landing Zone: <strong id="reportLandingZone">Lunar South Pole</strong></p>
+    </div>
+
+    <br>
+
+    <button onclick="startReturnJourney()" id="returnButton">
+        🌍 RETURN TO EARTH
+    </button>
+
+</section>
+
+<!-- 11 / RETURN TO EARTH -->
+
+<section class="panel" id="returnEarthPanel" style="display:none;">
+
+    <h2>11 / RETURN TO EARTH</h2>
+
+    <p>
+        Your lunar research is complete.
+        The same spacecraft is now preparing to bring the crew home!
+    </p>
+
+    <div class="space-scene" id="returnScene">
+
+        <div class="earth"></div>
+        <div class="moon"></div>
+
+        <div class="return-craft" id="returnCraft">
+            <div class="craft-flame"></div>
+            <div class="craft-body"></div>
+            <div class="craft-nose"></div>
+            <div class="craft-wing"></div>
+        </div>
+
+        <div class="scene-caption" id="returnCaption">
+            LUNAR ORBIT
+        </div>
+
+    </div>
+
+    <h3 id="returnStatus">Waiting for return launch...</h3>
+
+    <div style="background:#26364d;height:18px;
+                border-radius:10px;overflow:hidden;">
+
+        <div id="returnProgress"
+             style="height:100%;width:0%;
+                    background:#28c7e8;
+                    transition:width 1s;">
+        </div>
+
+    </div>
+
+    <br>
+
+    <button id="returnStartButton" onclick="beginEarthReturn()">
+        🌍 START RETURN JOURNEY
+    </button>
+
+    <div id="returnLandingResult"></div>
+
+</section>
+
+</main>
+<footer> LUNA ASCENT • Educational space mission design game • Student prototype </footer>
+
+<script>
+
+function setMissionPhase(phase) {
+    document.getElementById("telemetryPhase").textContent = phase;
+}
+
+function updateTelemetry(data) {
+
+    const powerPercent = Math.min(
+        100,
+        Math.round((data.power_needed / data.power_available) * 100)
+    );
+
+    const communicationPercent = Math.min(
+        100,
+        Math.round((data.data_generated / data.communications) * 100)
+    );
+
+    const coverage = Number(data.coverage) || 0;
+
+    // POWER
+    document.getElementById("telemetryPower").textContent =
+        data.power_needed + " / " + data.power_available;
+
+    document.getElementById("powerMeter").style.width =
+        powerPercent + "%";
+
+    document.getElementById("powerState").textContent =
+        data.power_needed <= data.power_available
+        ? "Power within available capacity"
+        : "Power capacity exceeded";
+
+    // COMMUNICATIONS
+    document.getElementById("telemetryCommunications").textContent =
+        data.data_generated + " / " + data.communications;
+
+    document.getElementById("communicationsMeter").style.width =
+        communicationPercent + "%";
+
+    document.getElementById("communicationsState").textContent =
+        data.data_generated <= data.communications
+        ? "Communications within capacity"
+        : "Communications capacity exceeded";
+
+    // LUNAR COVERAGE
+    document.getElementById("telemetryCoverage").textContent =
+        coverage + "%";
+
+    document.getElementById("coverageMeter").style.width =
+        Math.min(100, Math.max(0, coverage)) + "%";
+
+    // SCIENCE
+    document.getElementById("telemetryScience").textContent =
+        data.science + " points";
+
+    // MISSION STATUS
+    document.getElementById("telemetryStatus").textContent =
+        data.status;
+
+    document.getElementById("telemetryScore").textContent =
+        "Mission score: " + data.score + " / 100";
+
+    // SHOW DASHBOARD
+    document.getElementById("telemetryPanel").style.display = "block";
+
+    setMissionPhase("Mission design evaluated");
+}
+
+async function runSimulation() {
+  const instruments = Array.from(document.querySelectorAll('input[name="instrument"]:checked')).map(x => x.value);
+  const choices = {
+    objective: document.getElementById('objective').value,
+    rocket: document.getElementById('rocket').value,
+    orbit: document.getElementById('orbit').value,
+    instruments: instruments
+  };
+
+  const response = await fetch('/simulate', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(choices)
+  });
+  const data = await response.json();
+  updateTelemetry(data);
+  // Check whether the mission is ready for launch
+
+window.lastMissionReady = data.issues.length === 0;
+
+document.getElementById("launchPanel").style.display =
+    window.lastMissionReady ? "block" : "none";
+
+document.getElementById("countdown").textContent = "";
+
+document.getElementById("rocketAnimation").className = "";
+
+document.getElementById("launchMessage").textContent = "";
+
+document.getElementById("launchButton").disabled = false;
+
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('status').textContent = data.status + ' — ' + data.score + '/100';
+  document.getElementById('status').className = data.issues.length ? 'issue' : 'good';
+  document.getElementById('summary').textContent = data.summary;
+
+  const stats = [
+    ['Spacecraft mass', data.mass + ' / ' + data.rocket_capacity],
+    ['Power required', data.power_needed + ' / ' + data.power_available],
+    ['Mission cost', data.cost + ' / ' + data.budget + ' credits'],
+    ['Data generated', data.data_generated + ' / ' + data.communications],
+    ['Science value', data.science],
+    ['Selected rocket', data.rocket],
+    ['Selected orbit', data.orbit]
+  ];
+  document.getElementById('stats').innerHTML = stats.map(s =>
+    `<div class="stat">${s[0]}<strong>${s[1]}</strong></div>`
+  ).join('');
+
+  const issueList = document.getElementById('issues');
+  issueList.innerHTML = '';
+  if (data.issues.length === 0) {
+    issueList.innerHTML = '<li class="good">All simplified engineering checks passed. Great mission planning!</li>';
+  } else {
+    data.issues.forEach(issue => {
+      const li = document.createElement('li');
+      li.textContent = issue;
+      li.className = 'issue';
+      issueList.appendChild(li);
+    });
+  }
+  document.getElementById('result').scrollIntoView({behavior: 'smooth'});
+}
+async function startLaunch() {
+    setMissionPhase("Launch countdown");
+
+    if (!window.lastMissionReady) {
+        alert("Mission is not ready for launch!");
+        return;
+    }
+
+    const button = document.getElementById("launchButton");
+    const countdown = document.getElementById("countdown");
+    const rocket = document.getElementById("rocketAnimation");
+    const message = document.getElementById("launchMessage");
+
+    button.disabled = true;
+    rocket.className = "";
+    rocket.style.display = "none";
+    message.textContent = "";
+
+    // Five-second countdown
+
+    for (let number = 5; number >= 1; number--) {
+
+        countdown.textContent = number;
+
+        await new Promise(resolve =>
+            setTimeout(resolve, 1000)
+        );
+
+    }
+
+    countdown.textContent = "IGNITION!";
+
+    await new Promise(resolve =>
+        setTimeout(resolve, 700)
+    );
+
+    // Rocket liftoff animation
+
+    countdown.textContent = "";
+
+    rocket.style.display = "block";
+    rocket.classList.add("liftoff");
+
+    message.textContent = "🚀 LIFTOFF!";
+
+    await new Promise(resolve =>
+        setTimeout(resolve, 2600)
+    );
+
+    message.textContent =
+        "MISSION LAUNCHED SUCCESSFULLY!";
+
+
+    button.textContent = "LAUNCH COMPLETED";
+    document.getElementById("travelPanel").style.display = "block";
+
+}
+async function startJourney() {
+    setMissionPhase("Translunar cruise");
+    const button = document.getElementById("journeyButton");
+    const status = document.getElementById("journeyStatus");
+    const progress = document.getElementById("journeyProgress");
+    const arrival = document.getElementById("arrivalMessage");
+
+    button.disabled = true;
+    const scene = document.getElementById("travelScene");
+    scene.classList.remove("traveling");
+    void scene.offsetWidth;
+    scene.classList.add("traveling");
+
+document.getElementById("travelCaption").innerText =
+    "SPACECRAFT IN TRANSIT";
+    button.innerText = "JOURNEY IN PROGRESS...";
+    arrival.innerText = "";
+
+    const stages = [
+        "Leaving Earth's orbit...",
+        "Entering translunar trajectory...",
+        "Travelling through deep space...",
+        "Passing the halfway point...",
+        "Approaching the Moon...",
+        "Entering lunar orbit..."
+    ];
+
+    for (let i = 0; i < stages.length; i++) {
+        status.innerText = stages[i];
+        progress.style.width = ((i + 1) / stages.length * 100) + "%";
+
+        await new Promise(resolve => setTimeout(resolve, 1500));
+    }
+
+    status.innerText = "Lunar orbit reached!";
+    arrival.innerText = "🌕 SUCCESS! YOUR SPACECRAFT HAS REACHED THE MOON!";
+    document.getElementById("landingPanel").style.display = "block";
+
+    button.innerText = "JOURNEY COMPLETED";
+}
+async function startLanding() {
+    setMissionPhase("Lunar descent");
+    const button = document.getElementById("landingButton");
+    const status = document.getElementById("landingStatus");
+    const result = document.getElementById("landingResult");
+    const zone = document.getElementById("landingZone");
+
+    button.disabled = true;
+    const scene = document.getElementById("landingScene");
+    scene.classList.remove("landing");
+    void scene.offsetWidth;
+    scene.classList.add("landing");
+    result.innerText = "🌕 SUCCESS! WELCOME TO THE MOON!";
+
+    const stages = [
+        "Preparing landing systems...",
+        "Descending toward the lunar surface...",
+        "Checking landing zone...",
+        "Touchdown sequence initiated...",
+        "Landing successful!"
+    ];
+
+    for (let stage of stages) {
+        status.innerText = stage;
+        await new Promise(resolve => setTimeout(resolve, 1500));
+    }
+
+    status.innerText = "Spacecraft safely landed!";
+    setMissionPhase("Landed on the Moon");
+    document.getElementById("habitatPanel").style.display = "block";
+    result.innerText =
+        "🌕 SUCCESS! WELCOME TO THE MOON!";
+
+    button.innerText = "LANDING COMPLETED";
+}
+
+function activateHabitat() {
+    setMissionPhase("Lunar habitat active");
+    document.getElementById("habitatStatus").innerText =
+        "LUNAR HABITAT ONLINE!";
+
+    document.getElementById("powerStatus").innerText =
+        "Solar power active";
+
+    document.getElementById("oxygenStatus").innerText =
+        "Oxygen system active";
+
+    document.getElementById("researchStatus").innerText =
+        "Research laboratory online";
+
+    document.getElementById("habitatButton").innerText =
+        "HABITAT ACTIVATED";
+
+    document.getElementById("habitatButton").disabled = true;
+
+    document.getElementById("explorationPanel").style.display = "block";
+
+    drawExplorer();
+}
+
+let completedTasks = [false, false, false];
+
+let exploreMode = "astronaut";
+let roverDeployed = false;
+
+let playerX = 0.17;
+let playerY = 0.72;
+
+const heldKeys = {};
+
+const arena = document.getElementById("lunarArena");
+const avatar = document.getElementById("playerAvatar");
+const promptText = document.getElementById("nearbyPrompt");
+
+const sites = [
+    {id: 0, x: 0.72, y: 0.24, mode: "rover",
+     name: "Water-ice survey",
+     message: "Press E to scan for water ice."},
+
+    {id: 1, x: 0.82, y: 0.72, mode: "astronaut",
+     name: "Moon sample collection",
+     message: "Press E to collect a Moon sample."},
+
+    {id: 2, x: 0.17, y: 0.72, mode: "astronaut",
+     name: "Rover deployment",
+     message: "Press E to deploy the rover."}
+];
+
+function drawExplorer() {
+
+    avatar.style.left =
+        (playerX * arena.clientWidth) + "px";
+
+    avatar.style.top =
+        (playerY * arena.clientHeight) + "px";
+
+    avatar.textContent =
+        exploreMode === "rover" ? "🚙" : "👨‍🚀";
+
+    document.getElementById("modeButton").textContent =
+        exploreMode === "rover" ?
+        "🚶 EXIT ROVER" : "🚙 ENTER ROVER";
+
+    document.getElementById("modeStatus").textContent =
+        exploreMode === "rover" ?
+        "MODE: LUNAR ROVER" : "MODE: ASTRONAUT";
+
+    updateNearbyPrompt();
+}
+
+function updateNearbyPrompt() {
+
+    let closest = null;
+    let distance = Infinity;
+
+    for (const site of sites) {
+
+        if (completedTasks[site.id]) continue;
+
+        const dx =
+            (playerX - site.x) * arena.clientWidth;
+
+        const dy =
+            (playerY - site.y) * arena.clientHeight;
+
+        const d = Math.hypot(dx, dy);
+
+        if (d < distance) {
+            distance = d;
+            closest = site;
+        }
+    }
+
+    if (!closest || distance > 75) {
+        promptText.textContent =
+            "Explore the lunar surface and find the research sites.";
+        return;
+    }
+
+    if (closest.mode !== exploreMode) {
+        promptText.textContent =
+            "Switch to " + closest.mode +
+            " mode to interact with this location.";
+    } else {
+        promptText.textContent = closest.message;
+    }
+}
+
+function toggleExploreMode() {
+
+    if (exploreMode === "astronaut") {
+
+        if (!roverDeployed) {
+            promptText.textContent =
+                "First deploy your rover at the garage using E!";
+            return;
+        }
+
+        exploreMode = "rover";
+
+    } else {
+
+        exploreMode = "astronaut";
+
+    }
+
+    drawExplorer();
+}
+
+function interactWithSite() {
+
+    let closest = null;
+    let distance = Infinity;
+
+    for (const site of sites) {
+
+        if (completedTasks[site.id]) continue;
+
+        const dx =
+            (playerX - site.x) * arena.clientWidth;
+
+        const dy =
+            (playerY - site.y) * arena.clientHeight;
+
+        const d = Math.hypot(dx, dy);
+
+        if (d < distance) {
+            distance = d;
+            closest = site;
+        }
+    }
+
+    if (!closest || distance > 75) {
+        promptText.textContent =
+            "Move closer to a research location!";
+        return;
+    }
+
+    if (closest.mode !== exploreMode) {
+        promptText.textContent =
+            "Wrong mode! Switch to " + closest.mode + " mode.";
+        return;
+    }
+
+    if (closest.id === 2) {
+
+        roverDeployed = true;
+
+        promptText.textContent =
+            "ROVER DEPLOYED! You can now drive it.";
+
+    }
+
+    if (closest.id === 0) {
+
+        promptText.textContent =
+            "WATER-ICE SURVEY COMPLETE!";
+
+    }
+
+    if (closest.id === 1) {
+
+        promptText.textContent =
+            "LUNAR SAMPLE SUCCESSFULLY COLLECTED!";
+
+    }
+
+    completeTask(closest.id);
+
+    drawExplorer();
+}
+
+function completeTask(number) {
+
+    if (completedTasks[number]) return;
+
+    completedTasks[number] = true;
+
+    const names = [
+        "WATER-ICE SURVEY COMPLETED",
+        "MOON SAMPLES COLLECTED",
+        "LUNAR ROVER DEPLOYED"
+    ];
+
+    const siteIds = [
+        "siteWater",
+        "siteSamples",
+        "siteRover"
+    ];
+
+    document.getElementById(siteIds[number])
+        .classList.add("done");
+
+    const completed =
+        completedTasks.filter(Boolean).length;
+
+    document.getElementById("taskProgress").textContent =
+        "Objectives completed: " + completed + " / 3";
+
+    document.getElementById("taskBar").style.width =
+        (completed / 3 * 100) + "%";
+
+    if (completed === 3) {
+
+        document.getElementById("explorationResult")
+            .textContent =
+            "🌕 ALL SCIENTIFIC OBJECTIVES COMPLETED!";
+
+   showMissionReport(); }
+}
+
+function moveExplorer() {
+
+    const speed =
+        exploreMode === "rover" ? 0.0048 : 0.0028;
+
+    let dx = 0;
+    let dy = 0;
+
+    if (heldKeys["w"] || heldKeys["arrowup"]) dy--;
+    if (heldKeys["s"] || heldKeys["arrowdown"]) dy++;
+    if (heldKeys["a"] || heldKeys["arrowleft"]) dx--;
+    if (heldKeys["d"] || heldKeys["arrowright"]) dx++;
+
+    if (dx === 0 && dy === 0) return;
+
+    const length = Math.hypot(dx, dy);
+
+    playerX += (dx / length) * speed;
+    playerY += (dy / length) * speed;
+
+    playerX = Math.max(0.04, Math.min(0.96, playerX));
+    playerY = Math.max(0.12, Math.min(0.88, playerY));
+
+    drawExplorer();
+}
+
+document.addEventListener("keydown", function(event) {
+
+    const key = event.key.toLowerCase();
+
+    if ([
+        "arrowup", "arrowdown",
+        "arrowleft", "arrowright"
+    ].includes(key)) {
+        event.preventDefault();
+    }
+
+    heldKeys[key] = true;
+
+    if (
+        key === "e" &&
+        !event.repeat &&
+        document.getElementById("explorationPanel")
+            .style.display !== "none"
+    ) {
+        interactWithSite();
+    }
+
+});
+
+document.addEventListener("keyup", function(event) {
+
+    heldKeys[event.key.toLowerCase()] = false;
+
+});
+
+window.addEventListener("blur", function() {
+
+    Object.keys(heldKeys).forEach(key => {
+        heldKeys[key] = false;
+    });
+
+});
+
+setInterval(moveExplorer, 30);
+
+window.addEventListener("resize", drawExplorer);
+
+
+function showMissionReport() {
+
+    const report = document.getElementById("missionReportPanel");
+
+    // Update selected rocket
+    document.getElementById("reportRocket").textContent =
+        document.getElementById("rocket").selectedOptions[0].textContent;
+
+    // Update selected orbit
+    document.getElementById("reportOrbit").textContent =
+        document.getElementById("orbit").selectedOptions[0].textContent;
+
+    // Update landing zone
+    document.getElementById("reportLandingZone").textContent =
+        document.getElementById("landingZone").selectedOptions[0].textContent;
+
+    // Show the completed mission report
+    report.style.display = "block";
+
+    // Scroll to Section 10
+    report.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+    
+
+}
+ 
+function startReturnJourney() {
+    setMissionPhase("Preparing Earth return");
+
+    const panel = document.getElementById("returnEarthPanel");
+
+    panel.style.display = "block";
+
+    document.getElementById("returnStatus").textContent =
+        "Ready for return launch.";
+
+    document.getElementById("returnLandingResult").innerHTML = "";
+
+    document.getElementById("returnProgress").style.width = "0%";
+
+    document.getElementById("returnStartButton").disabled = false;
+
+    panel.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+
+async function beginEarthReturn() {
+    setMissionPhase("Earth return in progress");
+
+    const button = document.getElementById("returnStartButton");
+    const scene = document.getElementById("returnScene");
+    const status = document.getElementById("returnStatus");
+    const progress = document.getElementById("returnProgress");
+    const caption = document.getElementById("returnCaption");
+    const result = document.getElementById("returnLandingResult");
+
+    button.disabled = true;
+    result.innerHTML = "";
+
+    scene.classList.remove("return-scene-active");
+    void scene.offsetWidth;
+    scene.classList.add("return-scene-active");
+
+    const stages = [
+        "Preparing spacecraft for departure...",
+        "Leaving lunar orbit...",
+        "Beginning Earth return trajectory...",
+        "Travelling through deep space...",
+        "Passing the halfway point...",
+        "Approaching Earth...",
+        "Entering Earth's atmosphere...",
+        "Preparing landing systems..."
+    ];
+
+    for (let i = 0; i < stages.length; i++) {
+
+        status.textContent = stages[i];
+
+        progress.style.width =
+            ((i + 1) / stages.length * 100) + "%";
+
+        if (i === 0) {
+            caption.textContent = "DEPARTING THE MOON";
+        }
+
+        if (i === 5) {
+            caption.textContent = "EARTH APPROACH";
+        }
+
+        if (i === 6) {
+            caption.textContent = "ATMOSPHERIC RE-ENTRY";
+        }
+
+        await new Promise(resolve =>
+            setTimeout(resolve, 1500)
+        );
+    }
+
+    caption.textContent = "EARTH - MISSION COMPLETE";
+
+    status.textContent = "Spacecraft safely landed!";
+    setMissionPhase("MISSION COMPLETE — EARTH RETURN SUCCESSFUL");
+
+    result.innerHTML =
+        "<div class='return-landing'>" +
+        "🌍 WELCOME BACK TO EARTH!" +
+        "<p>🚀 LUNA ASCENT MISSION SUCCESSFUL!</p>" +
+        "<p>All 3 scientific objectives completed.</p>" +
+        "<p>Spacecraft and crew safely returned.</p>" +
+        "</div>";
+
+    button.textContent = "RETURN JOURNEY COMPLETED";
+
+}
+
+</script>
+</body>
+</html>
