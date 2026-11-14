@@ -2,7 +2,7 @@
 
 An educational web game where you design a simplified lunar orbiter mission and test whether your design would work.
 
-**Live demo:** [PASTE-YOUR-RENDER-LINK-HERE](https://luna-ascent.onrender.com/)
+**Live demo:** (https://luna-ascent.onrender.com/)
 **Source code:** https://github.com/poojamj-del/LUNA-ASCENT
 
 > **Note:** All numbers in this project are simplified game-balance values made for learning. They are **not** real NASA engineering specifications or validated mission calculations.
