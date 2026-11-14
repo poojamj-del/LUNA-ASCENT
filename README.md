@@ -1,4 +1,4 @@
-# Next Frontier (LUNA-ASCENT)
+# LUNA-ASCENT
 
 An educational web game where you design a simplified lunar orbiter mission and test whether your design would work.
 
@@ -7,7 +7,7 @@ An educational web game where you design a simplified lunar orbiter mission and 
 
 > **Note:** All numbers in this project are simplified game-balance values made for learning. They are **not** real NASA engineering specifications or validated mission calculations.
 
-![Screenshot](screenshot.png)
+
 <!-- Add a screenshot of your game to the repository, name it screenshot.png, and it will appear here. -->
 
 ## About the project
